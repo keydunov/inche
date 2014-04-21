@@ -1,0 +1,23 @@
+# Logfile created on 2014-04-21 22:36:42 +0400 by logger.rb/44203
+I, [2014-04-21T22:36:42.917344 #17044]  INFO -- : 0:  rake (10.1.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/rake-10.1.1.gemspec
+I, [2014-04-21T22:36:42.917889 #17044]  INFO -- : 0:  i18n (0.6.9) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/i18n-0.6.9.gemspec
+I, [2014-04-21T22:36:42.918378 #17044]  INFO -- : 0:  multi_json (1.9.2) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/multi_json-1.9.2.gemspec
+I, [2014-04-21T22:36:42.918816 #17044]  INFO -- : 0:  activesupport (3.2.17) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/activesupport-3.2.17.gemspec
+I, [2014-04-21T22:36:42.919282 #17044]  INFO -- : 0:  bubble-wrap (1.3.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/bubble-wrap-1.3.0.gemspec
+I, [2014-04-21T22:36:42.919736 #17044]  INFO -- : 0:  claide (0.4.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/claide-0.4.0.gemspec
+I, [2014-04-21T22:36:42.920214 #17044]  INFO -- : 0:  fuzzy_match (2.0.4) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/fuzzy_match-2.0.4.gemspec
+I, [2014-04-21T22:36:42.920674 #17044]  INFO -- : 0:  json_pure (1.8.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/json_pure-1.8.1.gemspec
+I, [2014-04-21T22:36:42.921123 #17044]  INFO -- : 0:  nap (0.6.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/nap-0.6.0.gemspec
+I, [2014-04-21T22:36:42.921604 #17044]  INFO -- : 0:  cocoapods-core (0.29.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/cocoapods-core-0.29.0.gemspec
+I, [2014-04-21T22:36:42.922073 #17044]  INFO -- : 0:  cocoapods-downloader (0.3.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/cocoapods-downloader-0.3.0.gemspec
+I, [2014-04-21T22:36:42.922536 #17044]  INFO -- : 0:  cocoapods-try-release-fix (0.1.2) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/cocoapods-try-release-fix-0.1.2.gemspec
+I, [2014-04-21T22:36:42.923008 #17044]  INFO -- : 0:  colored (1.2) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/colored-1.2.gemspec
+I, [2014-04-21T22:36:42.923483 #17044]  INFO -- : 0:  escape (0.0.4) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/escape-0.0.4.gemspec
+I, [2014-04-21T22:36:42.929999 #17044]  INFO -- : 0:  open4 (1.3.3) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/open4-1.3.3.gemspec
+I, [2014-04-21T22:36:42.930565 #17044]  INFO -- : 0:  xcodeproj (0.14.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/xcodeproj-0.14.1.gemspec
+I, [2014-04-21T22:36:42.931017 #17044]  INFO -- : 0:  cocoapods (0.29.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/cocoapods-0.29.0.gemspec
+I, [2014-04-21T22:36:42.931453 #17044]  INFO -- : 0:  motion-cocoapods (1.4.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/motion-cocoapods-1.4.0.gemspec
+I, [2014-04-21T22:36:42.931903 #17044]  INFO -- : 0:  bundler (1.5.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0@global/specifications/bundler-1.5.1.gemspec
+I, [2014-04-21T22:37:40.951643 #17219]  INFO -- : 0:  rake (10.1.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/rake-10.1.1.gemspec
+I, [2014-04-21T22:37:40.952721 #17219]  INFO -- : 0:  bubble-wrap (1.3.0) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0/specifications/bubble-wrap-1.3.0.gemspec
+I, [2014-04-21T22:37:40.953187 #17219]  INFO -- : 0:  bundler (1.5.1) from /Users/artyomkeydunov/.rvm/gems/ruby-2.1.0@global/specifications/bundler-1.5.1.gemspec

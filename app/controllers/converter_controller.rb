@@ -36,6 +36,17 @@ class ConverterController < UIViewController
     self.view.addSubview @leftColumn
     self.view.addSubview @rightColumn
 
+    menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
+    menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
+    menuButton.sizeToFit
+
+    # 10 is an offset from bottom, get it from design mockup
+    menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
+    menuButton.when(UIControlEventTouchUpInside) do
+      App.alert("tapped")
+    end
+    self.view.addSubview menuButton
+
 
     # ------ Handle touch moves -----------
 

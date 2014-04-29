@@ -58,6 +58,13 @@ class ConverterController < UIViewController
     if pgr.state == UIGestureRecognizerStateBegan
       @initialDragCoord = pgr.locationInView(pgr.view)
       @initialValue = @leftColumnNumber.text.to_i
+
+      UIView.beginAnimations(nil, context: nil)
+      UIView.setAnimationDuration(0.1)
+      UIView.setAnimationDidStopSelector("animateMoving");
+      UIView.setAnimationDelegate(self)
+      @leftColumnNumbersWrapper.alpha = 0.0
+      UIView.commitAnimations
     end
 
     newCoord = pgr.locationInView(pgr.view)
@@ -67,6 +74,14 @@ class ConverterController < UIViewController
     new_val =  (@initialValue - deltaY/15).round # пока хардкод
     @leftColumnNumber.text = new_val.to_s
     @rightColumnNumber.text = (new_val + 32).to_s
+  end
+
+  def animateMoving
+    @leftColumnNumbersWrapper.frame = [[@leftColumnNumbersWrapper.frame.origin.x, 100], @leftColumnNumbersWrapper.frame.size]
+    UIView.beginAnimations(nil, context: nil)
+    UIView.setAnimationDuration(0.1)
+    @leftColumnNumbersWrapper.alpha = 1.0
+    UIView.commitAnimations
   end
 
   def createNumber(value, wrapper)

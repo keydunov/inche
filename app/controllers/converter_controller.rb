@@ -51,7 +51,12 @@ class ConverterController < UIViewController
     # ------ Handle touch moves -----------
 
     pgr = UIPanGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
+    tgr = UIPanGestureRecognizer.alloc.initWithTarget(self, action: "handleTap:")
     self.view.addGestureRecognizer(pgr)
+  end
+
+  def handleTap(tgr)
+    puts "lol"
   end
 
   def handlePan(pgr)
@@ -59,12 +64,19 @@ class ConverterController < UIViewController
       @initialDragCoord = pgr.locationInView(pgr.view)
       @initialValue = @leftColumnNumber.text.to_i
 
-      UIView.beginAnimations(nil, context: nil)
-      UIView.setAnimationDuration(0.1)
-      UIView.setAnimationDidStopSelector("animateMoving");
-      UIView.setAnimationDelegate(self)
-      @leftColumnNumbersWrapper.alpha = 0.0
-      UIView.commitAnimations
+      if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
+        animateUp(@leftColumnNumbersWrapper)
+      else
+        animateUp(@rightColumnNumbersWrapper)
+      end
+    end
+
+    if pgr.state == UIGestureRecognizerStateEnded
+      if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
+        animateDown(@leftColumnNumbersWrapper)
+      else
+        animateDown(@rightColumnNumbersWrapper)
+      end
     end
 
     newCoord = pgr.locationInView(pgr.view)
@@ -76,11 +88,36 @@ class ConverterController < UIViewController
     @rightColumnNumber.text = (new_val + 32).to_s
   end
 
+  def animateDown(view)
+    animate(view, 200)
+  end
+
+  def animateUp(view)
+    animate(view, 0)
+  end
+
+  def animate(view, yPosition)
+    UIView.animateWithDuration(0.1,
+      animations: lambda {
+        view.alpha = 0.0
+      },
+      completion: lambda { |finished|
+        view.frame = [[view.frame.origin.x, yPosition], view.frame.size]
+        UIView.animateWithDuration(0.1,
+          animations: lambda {
+            view.alpha = 1.0
+          },
+          completion: nil
+        )
+      }
+    )
+  end
+
   def animateMoving
-    @leftColumnNumbersWrapper.frame = [[@leftColumnNumbersWrapper.frame.origin.x, 100], @leftColumnNumbersWrapper.frame.size]
+    @animatedView.frame = [[@animatedView.frame.origin.x, 0], @animatedView.frame.size]
     UIView.beginAnimations(nil, context: nil)
     UIView.setAnimationDuration(0.1)
-    @leftColumnNumbersWrapper.alpha = 1.0
+    @animatedView.alpha = 1.0
     UIView.commitAnimations
   end
 

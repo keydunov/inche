@@ -1,5 +1,5 @@
 class ListController < UIViewController
-  attr_accessor :delegate
+  attr_accessor :delegate, :baseColor
 
   DARK_COLOR_STRING = "#3c3c3c"
 
@@ -15,8 +15,6 @@ class ListController < UIViewController
 
   def viewDidLoad
     self.edgesForExtendedLayout = UIRectEdgeNone
-
-    @baseColor = "#48CA77".to_color
 
     tableFrame = [[0, 20], [self.view.size.width, self.view.size.height - 20]]
     @table = UITableView.alloc.initWithFrame(self.view.bounds, style: UITableViewStylePlain)

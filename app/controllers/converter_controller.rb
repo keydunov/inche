@@ -43,6 +43,7 @@ class ConverterController < UIViewController
     menuButton.when(UIControlEventTouchUpInside) do
       listController = ListController.alloc.init
       listController.delegate = self
+      listController.baseColor = "#48CA77".to_color
       self.presentModalViewController(listController, animated: true)
     end
     self.view.addSubview menuButton
@@ -56,12 +57,7 @@ class ConverterController < UIViewController
     # ------ Handle touch moves -----------
 
     pgr = UIPanGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
-    tgr = UIPanGestureRecognizer.alloc.initWithTarget(self, action: "handleTap:")
     self.view.addGestureRecognizer(pgr)
-  end
-
-  def handleTap(tgr)
-    puts "lol"
   end
 
   def handlePan(pgr)
@@ -100,7 +96,6 @@ class ConverterController < UIViewController
   end
 
   def animate(view, yPosition, up)
-    puts view.frame.origin.x
     @arrows.center = [view.frame.size.width/2 + view.superview.frame.origin.x, self.view.frame.size.height/2]
     UIView.animateWithDuration(0.1,
       animations: lambda {

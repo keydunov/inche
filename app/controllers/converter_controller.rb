@@ -35,6 +35,7 @@ class ConverterController < UIViewController
 
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
     menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
+    menuButton.setBackgroundImage(UIImage.imageNamed("menu_highlighted"), forState:UIControlStateHighlighted)
     menuButton.sizeToFit
 
     # 10 is an offset from bottom, get it from design mockup

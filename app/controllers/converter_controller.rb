@@ -42,7 +42,7 @@ class ConverterController < UIViewController
     # 10 is an offset from bottom, get it from design mockup
     menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
     menuButton.when(UIControlEventTouchUpInside) do
-      App.alert("tapped")
+      self.presentModalViewController(ListController.alloc.init, animated: true)
     end
     self.view.addSubview menuButton
 

@@ -4,7 +4,6 @@ class ConverterController < UIViewController
 
 
   def viewDidLoad
-
     # Половина ширина экраны
     width_half = self.view.frame.size.width/2
 
@@ -18,7 +17,6 @@ class ConverterController < UIViewController
 
     @leftColumnNumber = createNumber(INITIAL_VALUE, @leftColumnNumbersWrapper)
     @leftColumnNumbersWrapper.addSubview @leftColumnNumber
-
 
     # # #
     # правая колонка
@@ -42,7 +40,9 @@ class ConverterController < UIViewController
     # 10 is an offset from bottom, get it from design mockup
     menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
     menuButton.when(UIControlEventTouchUpInside) do
-      self.presentModalViewController(ListController.alloc.init, animated: true)
+      listController = ListController.alloc.init
+      listController.delegate = self
+      self.presentModalViewController(listController, animated: true)
     end
     self.view.addSubview menuButton
 
@@ -69,18 +69,16 @@ class ConverterController < UIViewController
       @initialValue = @leftColumnNumber.text.to_i
 
       if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
-        animateUp(@leftColumnNumbersWrapper)
+        @initialView = @leftColumnNumbersWrapper
       else
-        animateUp(@rightColumnNumbersWrapper)
+        @initialView = @rightColumnNumbersWrapper
       end
+
+      animateUp(@initialView)
     end
 
     if pgr.state == UIGestureRecognizerStateEnded
-      if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
-        animateDown(@leftColumnNumbersWrapper)
-      else
-        animateDown(@rightColumnNumbersWrapper)
-      end
+      animateDown(@initialView)
     end
 
     newCoord = pgr.locationInView(pgr.view)
@@ -118,6 +116,11 @@ class ConverterController < UIViewController
         )
       }
     )
+  end
+
+  def resetWithNewNumbers(x, y)
+    @leftColumnNumber.text = x.to_s
+    @rightColumnNumber.text = y.to_s
   end
 
   def animateMoving

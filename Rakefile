@@ -13,4 +13,10 @@ Motion::Project::App.setup do |app|
   app.name = 'Inche'
 
   app.icons = ["Icon-60.png", "Icon-60@2x.png", "Icon-72.png", "Icon-72@2x.png"]
+
+  app.development do
+    app.identifier = 'com.artkey.inche'
+    app.provisioning_profile = "/Users/artyomkeydunov/provision_profiles/Inche_Development.mobileprovision"
+    app.codesign_certificate = "iPhone Developer: Artyom Keydunov (35GH936NY5)"
+  end
 end

@@ -32,7 +32,6 @@ class ConverterController < UIViewController
     @rightColumnNumber = createNumber(32, @rightColumnNumbersWrapper)
     @rightColumnNumbersWrapper.addSubview @rightColumnNumber
 
-
     self.view.addSubview @leftColumn
     self.view.addSubview @rightColumn
 
@@ -47,6 +46,11 @@ class ConverterController < UIViewController
     end
     self.view.addSubview menuButton
 
+    # Arrows
+    @arrows = UIImageView.alloc.initWithImage(UIImage.imageNamed("arrows"))
+    @arrows.sizeToFit
+    @arrows.alpha = 0
+    self.view.addSubview(@arrows)
 
     # ------ Handle touch moves -----------
 
@@ -89,14 +93,16 @@ class ConverterController < UIViewController
   end
 
   def animateDown(view)
-    animate(view, 200)
+    animate(view, 200, false)
   end
 
   def animateUp(view)
-    animate(view, 0)
+    animate(view, 0, true)
   end
 
-  def animate(view, yPosition)
+  def animate(view, yPosition, up)
+    puts view.frame.origin.x
+    @arrows.center = [view.frame.size.width/2 + view.superview.frame.origin.x, self.view.frame.size.height/2]
     UIView.animateWithDuration(0.1,
       animations: lambda {
         view.alpha = 0.0
@@ -106,6 +112,7 @@ class ConverterController < UIViewController
         UIView.animateWithDuration(0.1,
           animations: lambda {
             view.alpha = 1.0
+            up ? @arrows.alpha = 1.0 : @arrows.alpha = 0.0
           },
           completion: nil
         )

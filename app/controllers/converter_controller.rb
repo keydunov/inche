@@ -2,36 +2,36 @@ class ConverterController < UIViewController
   NUMBERS_WRAPPER_HEIGHT = 169
   INITIAL_VALUE = 0
 
+  INITIAL_COLOR = "#48CA77".to_color
+  DARK_COLOR = "#3c3c3c".to_color
+
 
   def viewDidLoad
     # Половина ширина экраны
     width_half = self.view.frame.size.width/2
+    self.view.backgroundColor = INITIAL_COLOR
 
     # левая колонка
-    @leftColumn = UIView.alloc.initWithFrame [[0, 0], [width_half, self.view.frame.size.height]]
-    @leftColumn.backgroundColor = "#48CA77".to_color
-
-    @leftColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [@leftColumn.frame.size.width, NUMBERS_WRAPPER_HEIGHT]]
-    @leftColumnNumbersWrapper.center = [@leftColumn.frame.size.width/2, @leftColumn.frame.size.height/2]
-    @leftColumn.addSubview(@leftColumnNumbersWrapper)
+    @leftColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [width_half, NUMBERS_WRAPPER_HEIGHT]]
+    @leftColumnNumbersWrapper.center = [self.view.frame.size.width*0.25, self.view.frame.size.height/2]
+    self.view.addSubview(@leftColumnNumbersWrapper)
 
     @leftColumnNumber = createNumber(INITIAL_VALUE, @leftColumnNumbersWrapper)
     @leftColumnNumbersWrapper.addSubview @leftColumnNumber
 
     # # #
-    # правая колонка
-    @rightColumn = UIView.alloc.initWithFrame [[width_half, 0], [width_half, self.view.frame.size.height]]
-    @rightColumn.backgroundColor = "#45AD6B".to_color
+    # маска
+    @rightColumnMask = UIView.alloc.initWithFrame [[width_half, 0], [width_half, self.view.frame.size.height]]
+    @rightColumnMask.backgroundColor = DARK_COLOR
+    @rightColumnMask.alpha = 0.2
+    self.view.addSubview @rightColumnMask
 
-    @rightColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [@rightColumn.frame.size.width, NUMBERS_WRAPPER_HEIGHT]]
-    @rightColumnNumbersWrapper.center = [@rightColumn.frame.size.width/2, @rightColumn.frame.size.height/2]
-    @rightColumn.addSubview(@rightColumnNumbersWrapper)
+    @rightColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [width_half, NUMBERS_WRAPPER_HEIGHT]]
+    @rightColumnNumbersWrapper.center = [self.view.frame.size.width*0.75, self.view.frame.size.height/2]
+    self.view.addSubview(@rightColumnNumbersWrapper)
 
     @rightColumnNumber = createNumber(32, @rightColumnNumbersWrapper)
     @rightColumnNumbersWrapper.addSubview @rightColumnNumber
-
-    self.view.addSubview @leftColumn
-    self.view.addSubview @rightColumn
 
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
     menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)

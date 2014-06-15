@@ -1,15 +1,20 @@
 class ConverterController < UIViewController
   NUMBERS_WRAPPER_HEIGHT = 169
   INITIAL_VALUE = 0
+  INITIAL_HUE = 142/360.0
 
-  INITIAL_COLOR = "#48CA77".to_color
+  #INITIAL_COLOR = "#48CA77".to_color
+  INITIAL_COLOR = UIColor.colorWithHue((142/360.0), saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
   DARK_COLOR = "#3c3c3c".to_color
 
 
   def viewDidLoad
     # Половина ширина экраны
     width_half = self.view.frame.size.width/2
-    self.view.backgroundColor = INITIAL_COLOR
+    @currentHue = INITIAL_HUE
+    @currentColor = INITIAL_COLOR
+
+    self.view.backgroundColor = @currentColor
 
     # левая колонка
     @leftColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [width_half, NUMBERS_WRAPPER_HEIGHT]]
@@ -43,7 +48,7 @@ class ConverterController < UIViewController
     menuButton.when(UIControlEventTouchUpInside) do
       listController = ListController.alloc.init
       listController.delegate = self
-      listController.baseColor = "#48CA77".to_color
+      listController.baseColor = @currentColor
       self.presentModalViewController(listController, animated: true)
     end
     self.view.addSubview menuButton
@@ -64,6 +69,7 @@ class ConverterController < UIViewController
     if pgr.state == UIGestureRecognizerStateBegan
       @initialDragCoord = pgr.locationInView(pgr.view)
       @initialValue = @leftColumnNumber.text.to_i
+      @initialInterationHue = @currentHue
 
       if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
         @initialView = @leftColumnNumbersWrapper
@@ -81,10 +87,20 @@ class ConverterController < UIViewController
     newCoord = pgr.locationInView(pgr.view)
 
     deltaY = newCoord.y - @initialDragCoord.y;
+    @currentHue = @initialInterationHue - deltaY/(self.view.frame.size.height*1.5).to_f
+    if @currentHue > 1
+      @currentHue = @currentHue - 1
+    end
+    updateBackgroundColor
 
     new_val =  (@initialValue - deltaY/15).round # пока хардкод
     @leftColumnNumber.text = new_val.to_s
     @rightColumnNumber.text = (new_val + 32).to_s
+  end
+
+  def updateBackgroundColor
+    @currentColor = UIColor.colorWithHue(@currentHue, saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
+    self.view.backgroundColor = @currentColor
   end
 
   def animateDown(view)

@@ -112,7 +112,7 @@ class ConverterController < UIViewController
   end
 
   def animate(view, yPosition, up)
-    @arrows.center = [view.frame.size.width/2 + view.superview.frame.origin.x, self.view.frame.size.height/2]
+    @arrows.center = [view.frame.size.width/2 + view.frame.origin.x, self.view.frame.size.height/2]
     UIView.animateWithDuration(0.1,
       animations: lambda {
         view.alpha = 0.0

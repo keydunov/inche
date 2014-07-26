@@ -12,6 +12,8 @@ Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'Inche'
 
+  app.frameworks << "QuartzCore"
+
   app.icons = ["Icon-60.png", "Icon-60@2x.png", "Icon-72.png", "Icon-72@2x.png"]
 
   app.development do

@@ -73,9 +73,23 @@ class ListController < UIViewController
     cell.addSubview(label)
 
     if OPTIONS[indexPath.row][:has_double]
-      iconName = indexPath.row == 0 ? "double_top" : "double"
-      doubleIcon = UIImageView.alloc.initWithImage(UIImage.imageNamed(iconName))
-      doubleIcon.sizeToFit
+      #TODO: extract into helper method
+      color = (indexPath.row == 0 ? @baseColor : UIColor.whiteColor)
+
+      doubleIcon = UIView.alloc.initWithFrame([[0, 0], [32, 32]])
+      doubleIcon.layer.cornerRadius = 16;
+      doubleIcon.layer.borderWidth = 2;
+      doubleIcon.layer.borderColor = color.CGColor
+
+      doubleIconLabel = UILabel.alloc.initWithFrame(doubleIcon.frame)
+      doubleIconLabel.text = "2x"
+      doubleIconLabel.sizeToFit
+      doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2]
+      doubleIconLabel.color = color
+      doubleIconLabel.textAlignment = NSTextAlignmentCenter
+      doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Light", size: 16)
+      doubleIcon.addSubview(doubleIconLabel)
+
       doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2 - 30, cell.frame.size.height/2]
       cell.addSubview(doubleIcon)
     end

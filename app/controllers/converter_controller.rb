@@ -61,11 +61,12 @@ class ConverterController < UIViewController
 
     # ------ Handle touch moves -----------
 
-    pgr = UIPanGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
+    pgr = CustomGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
     self.view.addGestureRecognizer(pgr)
   end
 
   def handlePan(pgr)
+    # Start draging
     if pgr.state == UIGestureRecognizerStateBegan
       @initialDragCoord = pgr.locationInView(pgr.view)
       @initialValue = @leftColumnNumber.text.to_i
@@ -80,6 +81,7 @@ class ConverterController < UIViewController
       animateUp(@initialView)
     end
 
+    # Stop draging
     if pgr.state == UIGestureRecognizerStateEnded
       animateDown(@initialView)
     end
@@ -87,20 +89,25 @@ class ConverterController < UIViewController
     newCoord = pgr.locationInView(pgr.view)
 
     deltaY = newCoord.y - @initialDragCoord.y;
-    @currentHue = @initialInterationHue - deltaY/(self.view.frame.size.height*1.5).to_f
-    if @currentHue > 1
-      @currentHue = @currentHue - 1
-    end
-    updateBackgroundColor
 
+    updateBackgroundColor(deltaY)
+    updateValues(deltaY)
+  end
+
+  def updateBackgroundColor(deltaY)
+    @currentHue = @initialInterationHue - deltaY/(self.view.frame.size.height*1.5).to_f
+    @currentHue > 1 && (@currentHue = @currentHue - 1)
+    @currentHue < 0 && (@currentHue = @currentHue + 1)
+
+    @currentColor = UIColor.colorWithHue(@currentHue, saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
+    self.view.backgroundColor = @currentColor
+  end
+
+  def updateValues(deltaY)
+    # Update value
     new_val =  (@initialValue - deltaY/15).round # пока хардкод
     @leftColumnNumber.text = new_val.to_s
     @rightColumnNumber.text = (new_val + 32).to_s
-  end
-
-  def updateBackgroundColor
-    @currentColor = UIColor.colorWithHue(@currentHue, saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
-    self.view.backgroundColor = @currentColor
   end
 
   def animateDown(view)

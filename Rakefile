@@ -8,6 +8,8 @@ begin
 rescue LoadError
 end
 
+require 'bubble-wrap/reactor'
+
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'Inche'
@@ -15,6 +17,7 @@ Motion::Project::App.setup do |app|
   app.frameworks << "QuartzCore"
 
   app.icons = ["Icon-60.png", "Icon-60@2x.png", "Icon-72.png", "Icon-72@2x.png"]
+  app.interface_orientations = [:portrait]
 
   app.development do
     app.identifier = 'com.artkey.inche'

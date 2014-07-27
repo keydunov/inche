@@ -20,8 +20,8 @@ Motion::Project::App.setup do |app|
   app.interface_orientations = [:portrait]
 
   app.development do
-    app.identifier = 'com.artkey.inche'
+    app.identifier = 'com.b1nary.inche'
     app.provisioning_profile = "/Users/artyomkeydunov/provision_profiles/Inche_Development.mobileprovision"
-    app.codesign_certificate = "iPhone Developer: Artyom Keydunov (35GH936NY5)"
+    app.codesign_certificate = "iPhone Developer: Mikhail Melanin (98D5N2ZGKS)"
   end
 end

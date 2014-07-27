@@ -3,14 +3,31 @@ class ListController < UIViewController
 
   DARK_COLOR_STRING = "#3c3c3c"
 
-  OPTIONS = [
-    { name: "INCH ‹› CENTIMETER", has_double: true },
-    { name: "MILE ‹› KILOMETRE", has_double: true },
-    { name: "FOOT ‹› METER", has_double: true },
-    { name: "CELSIUS ‹› FAHRENHEIT" },
-    { name: "POUND ‹› KILOGRAM" },
-    { name: "OUNCE ‹› GRAM" },
-    { name: "ACRE ‹› HECTARE"}
+  PAIRS = [
+    {
+      name: "INCH ‹› CENTIMETER",
+      single: { x: 1, x_function: ->(y) { 2.54000000000003*y }, y_function: ->(x) { 0.39370078740157*x }, x_label: "in", y_label: "cm" },
+      double: { x: 1, x_function: ->(y) { 6.4516*y }, y_function: ->(x) { 0.15500031000062*x }, x_label: "sq in", y_label: "sq cm" }
+    },
+    {
+      name: "MILE ‹› KILOMETRE",
+      single: { x: 1, x_function: ->(y) { 1.609344*y }, y_function: ->(x) { 0.62137119223733*x }, x_label: "mi", y_label: "km" },
+      double: { x: 1, x_function: ->(y) { 2.589988110336*y }, y_function: ->(x) { 0.38610215854245*x }, x_label: "sq mi", y_label: "sq km" }
+    },
+    {
+      name: "FOOT ‹› METER",
+      single: { x: 1, x_function: ->(y) { 0.3048*y }, y_function: ->(x) { 3.28084*x }, x_label: "ft", y_label: "m" },
+      double: { x: 1, x_function: ->(y) { 0.092903*y }, y_function: ->(x) { 10.7639*x }, x_label: "sq ft", y_label: "sq m" }
+    },
+    { name: "CELSIUS ‹› FAHRENHEIT", x: 27, y_function: ->(x) { (x-32)*(5/9) }, x_function: ->(y) { (y*(9/5)) + 32 }, degree: true },
+
+    { name: "POUND ‹› KILOGRAM",
+      x: 1, y_function: ->(x) { x * 2.2046223302272 }, x_function: ->(y) { y/2.2046223302272 }, x_label: "lb", y_label: "kg" },
+
+    { name: "OUNCE ‹› GRAM",
+      x: 1, y_function: ->(x) { x * 28.349523125 }, x_function: ->(y) { y*0.03527396194 }, x_label: "oz", y_label: "gr" },
+    { name: "ACRE ‹› HECTARE",
+      x: 1, y_function: ->(x) { x * 0.40468564224 }, x_function: ->(y) { y*2.4710538146717 }, x_label: "acre", y_label: "ha" },
   ]
 
   def viewDidLoad
@@ -28,7 +45,7 @@ class ListController < UIViewController
   end
 
   def tableView(tableView, numberOfRowsInSection: section)
-    OPTIONS.size
+    PAIRS.size
   end
 
   def tableView(tableView, heightForRowAtIndexPath: indexPath)
@@ -57,7 +74,7 @@ class ListController < UIViewController
 
     label = UILabel.alloc.initWithFrame(CGRectZero)
     label.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 20)
-    attributedString = NSMutableAttributedString.alloc.initWithString(OPTIONS[indexPath.row][:name])
+    attributedString = NSMutableAttributedString.alloc.initWithString(PAIRS[indexPath.row][:name])
     attributedString.addAttribute(NSKernAttributeName, value: 1.4, range: NSMakeRange(0,9))
     label.attributedText = attributedString
     label.sizeToFit
@@ -72,11 +89,12 @@ class ListController < UIViewController
 
     cell.addSubview(label)
 
-    if OPTIONS[indexPath.row][:has_double]
+    if PAIRS[indexPath.row][:double]
       #TODO: extract into helper method
       color = (indexPath.row == 0 ? @baseColor : UIColor.whiteColor)
 
-      doubleIcon = UIView.alloc.initWithFrame([[0, 0], [32, 32]])
+      doubleIcon = UIButton.buttonWithType(UIButtonTypeCustom)
+      doubleIcon.frame = [[0, 0], [32, 32]]
       doubleIcon.layer.cornerRadius = 16;
       doubleIcon.layer.borderWidth = 2;
       doubleIcon.layer.borderColor = color.CGColor
@@ -91,6 +109,9 @@ class ListController < UIViewController
       doubleIcon.addSubview(doubleIconLabel)
 
       doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2 - 30, cell.frame.size.height/2]
+      doubleIcon.when(UIControlEventTouchUpInside) do
+        showConverter(PAIRS[indexPath.row][:double])
+      end
       cell.addSubview(doubleIcon)
     end
 
@@ -100,7 +121,11 @@ class ListController < UIViewController
   end
 
   def tableView(tableView, didSelectRowAtIndexPath: indexPath)
-    self.delegate.resetWithNewNumbers(0, 32)
+    showConverter(PAIRS[indexPath.row][:single] || PAIRS[indexPath.row])
+  end
+
+  def showConverter(pair)
+    self.delegate.resetWithPair(pair)
     self.dismissModalViewControllerAnimated(true)
   end
 end

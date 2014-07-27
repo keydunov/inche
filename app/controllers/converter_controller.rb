@@ -83,6 +83,7 @@ class ConverterController < UIViewController
   end
 
   def handlePan(pgr)
+    @downAnimationTimers ||= []
     # Start draging
     if pgr.state == UIGestureRecognizerStateBegan
       @initialDragCoord = pgr.locationInView(pgr.view)
@@ -97,13 +98,10 @@ class ConverterController < UIViewController
         @changing = :y
         @initialValue = @rightColumnNumber.text.to_i
       end
+      EM.cancel_timer @downAnimationTimers.each { |timer| EM.cancel_timer timer }
+      @downAnimationTimers = []
 
-      animateUp(@initialView)
-    end
-
-    # Stop draging
-    if pgr.state == UIGestureRecognizerStateEnded
-      animateDown(@initialView)
+      readyToConvert(@changing)
     end
 
     newCoord = pgr.locationInView(pgr.view)
@@ -112,6 +110,13 @@ class ConverterController < UIViewController
     if newVal >= 0 || @pair[:degree]
       updateBackgroundColor(deltaY)
       updateValues(newVal, @changing)
+    end
+
+    # Stop draging
+    if pgr.state == UIGestureRecognizerStateEnded
+      changing = @changing
+      @downAnimationTimers << EM.add_timer(0.15) { animateDown(changing) }
+      @changing = nil
     end
   end
 
@@ -149,28 +154,38 @@ class ConverterController < UIViewController
     updateFractionNumber(fraction_part, viewFraction, viewInteger, viewFraction.superview)
   end
 
-  def animateDown(view)
-    animate(view, 200, false)
+  def readyToConvert(changing)
+    self.view.layer.removeAllAnimations
+    if changing == :x
+      activeView, passiveView = @leftColumnNumbersWrapper, @rightColumnNumbersWrapper
+    else
+      passiveView, activeView = @leftColumnNumbersWrapper, @rightColumnNumbersWrapper
+    end
+
+    @arrows.center = [activeView.frame.size.width/2 + activeView.frame.origin.x, self.view.frame.size.height/2]
+    @arrows.alpha = 1.0
+    activeView.frame = [[activeView.frame.origin.x, 0], activeView.frame.size]
+    passiveView.frame = [[passiveView.frame.origin.x, 200], passiveView.frame.size]
   end
 
-  def animateUp(view)
-    animate(view, 0, true)
-  end
-
-  def animate(view, yPosition, up)
+  def animateDown(changing)
+    view = changing == :x ? @leftColumnNumbersWrapper : @rightColumnNumbersWrapper
+    yPosition = 200
     @arrows.center = [view.frame.size.width/2 + view.frame.origin.x, self.view.frame.size.height/2]
-    UIView.animateWithDuration(0.05,
+    @arrows.alpha = 0.0
+    UIView.animateWithDuration(0.1,
       animations: lambda {
         view.alpha = 0.0
       },
       completion: lambda { |finished|
         view.frame = [[view.frame.origin.x, yPosition], view.frame.size]
-        UIView.animateWithDuration(0.05,
+        UIView.animateWithDuration(0.2,
           animations: lambda {
             view.alpha = 1.0
-            up ? @arrows.alpha = 1.0 : @arrows.alpha = 0.0
           },
-          completion: nil
+          completion: lambda { |finished|
+            readyToConvert(@changing) if @changing
+          }
         )
       }
     )

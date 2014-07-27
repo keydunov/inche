@@ -106,7 +106,7 @@ class ListController < UIViewController
       doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2]
       doubleIconLabel.color = color
       doubleIconLabel.textAlignment = NSTextAlignmentCenter
-      doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Light", size: 16)
+      doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Regular", size: 16)
       doubleIcon.addSubview(doubleIconLabel)
 
       doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2 - 30, cell.frame.size.height/2]

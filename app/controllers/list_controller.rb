@@ -20,7 +20,7 @@ class ListController < UIViewController
       double: { x: 1, x_function: ->(y) { 10.7639*y }, y_function: ->(x) { 0.092903*x }, x_label: "sq ft", y_label: "sq m" }
     },
     { name: "CELSIUS ‹› FAHRENHEIT",
-      x: 27, y_function: ->(x) { (x-32)*(5/9) }, x_function: ->(y) { (y*(9/5)) + 32 }, degree: true },
+      x: 27, y_function: ->(x) { (x*9/5) + 32 }, x_function: ->(y) { (y-32)*5/9 }, degree: true, x_label: "°C", y_label: "°F" },
 
     { name: "POUND ‹› KILOGRAM",
       x: 1, y_function: ->(x) { x * 0.453592 }, x_function: ->(y) { y*2.20462 }, x_label: "lb", y_label: "kg" },

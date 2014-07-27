@@ -103,14 +103,13 @@ class ConverterController < UIViewController
 
     # Stop draging
     if pgr.state == UIGestureRecognizerStateEnded
-      puts "UIGestureRecognizerStateEnded"
       animateDown(@initialView)
     end
 
     newCoord = pgr.locationInView(pgr.view)
     deltaY = newCoord.y - @initialDragCoord.y;
     newVal =  (@initialValue - deltaY/15).round # пока хардкод
-    if newVal >= 0
+    if newVal >= 0 || @pair[:degree]
       updateBackgroundColor(deltaY)
       updateValues(newVal, @changing)
     end
@@ -140,7 +139,7 @@ class ConverterController < UIViewController
     integer_part = value.split(".")[0]
     fraction_part = value.split(".")[1]
 
-    fontSize = integer_part.to_i >= 100 ? 55 : 70
+    fontSize = integer_part.to_i.abs >= 100 ? 55 : 70
     viewInteger.font = UIFont.fontWithName("HelveticaNeue-Light", size: fontSize)
 
     viewInteger.text = integer_part
@@ -215,7 +214,7 @@ class ConverterController < UIViewController
 
   def updateFractionNumber(value, view, numberView, wrapper)
    origin_x = numberView.frame.origin.x+numberView.frame.size.width
-   origin_y = numberView.frame.origin.y + numberView.frame.size.height - view.frame.size.height - 11
+   origin_y = numberView.frame.origin.y + numberView.frame.size.height - view.frame.size.height - (numberView.frame.size.height*0.13)
    view.frame = [[origin_x, origin_y], view.frame.size]
    view.text = "." + value.to_s
    view.sizeToFit

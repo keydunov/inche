@@ -1,9 +1,9 @@
 class ConverterController < UIViewController
   NUMBERS_WRAPPER_HEIGHT = 169
-  INITIAL_HUE = 142/360.0
+  INITIAL_HUE = 160/360.0
 
   #INITIAL_COLOR = "#48CA77".to_color
-  INITIAL_COLOR = UIColor.colorWithHue((142/360.0), saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
+  INITIAL_COLOR = UIColor.colorWithHue((160/360.0), saturation: (54/100.0), brightness: (78/100.0), alpha: 1)
   DARK_COLOR = "#3c3c3c".to_color
 
   def viewDidLoad
@@ -53,16 +53,24 @@ class ConverterController < UIViewController
     @rightColumnNumbersWrapper.addSubview @rightColumnFractionNumber
 
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
-    menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
-    menuButton.setBackgroundImage(UIImage.imageNamed("menu_highlighted"), forState:UIControlStateHighlighted)
+    menuButton.setImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
+    menuButton.setImage(UIImage.imageNamed("menu_highlighted"), forState:UIControlStateHighlighted)
     menuButton.sizeToFit
+
+    menuButton.when(UIControlEventTouchDown) do
+      menuButton.sizeToFit
+      menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
+    end
 
     # 10 is an offset from bottom, get it from design mockup
     menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
+
     menuButton.when(UIControlEventTouchUpInside) do
       listController = ListController.alloc.init
       listController.delegate = self
       listController.baseColor = @currentColor
+      menuButton.sizeToFit
+      menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
       self.presentModalViewController(listController, animated: true)
     end
     self.view.addSubview menuButton
@@ -92,11 +100,11 @@ class ConverterController < UIViewController
       if pgr.locationInView(pgr.view).x < self.view.frame.size.width/2
         @initialView = @leftColumnNumbersWrapper
         @changing = :x
-        @initialValue = @leftColumnNumber.text.to_i
+        @initialValue = @currentX
       else
         @initialView = @rightColumnNumbersWrapper
         @changing = :y
-        @initialValue = @rightColumnNumber.text.to_i
+        @initialValue = @currentY
       end
       EM.cancel_timer @downAnimationTimers.each { |timer| EM.cancel_timer timer }
       @downAnimationTimers = []
@@ -107,7 +115,9 @@ class ConverterController < UIViewController
     newCoord = pgr.locationInView(pgr.view)
     deltaY = newCoord.y - @initialDragCoord.y;
     newVal =  (@initialValue - deltaY/15).round # пока хардкод
-    if newVal >= 0 || @pair[:degree]
+    newValSecond = (@changing == :x ? @pair[:y_function].call(newVal) : @pair[:x_function].call(newVal))
+
+    if newVal.abs < 1000 && newValSecond.abs < 1000
       updateBackgroundColor(deltaY)
       updateValues(newVal, @changing)
     end
@@ -125,21 +135,26 @@ class ConverterController < UIViewController
     @currentHue > 1 && (@currentHue = @currentHue - 1)
     @currentHue < 0 && (@currentHue = @currentHue + 1)
 
-    @currentColor = UIColor.colorWithHue(@currentHue, saturation: (64/100.0), brightness: (79/100.0), alpha: 1)
+    @currentColor = UIColor.colorWithHue(@currentHue, saturation: (54/100.0), brightness: (78/100.0), alpha: 1)
     self.view.backgroundColor = @currentColor
   end
 
   def updateValues(newVal, changing)
     if changing == :x
-      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, newVal)
-      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @pair[:y_function].call(newVal))
+      @currentX = newVal.to_i
+      @currentY = @pair[:y_function].call(newVal)
+      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @currentX)
+      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @currentY)
     else
-      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, newVal)
-      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @pair[:x_function].call(newVal))
+      @currentY = newVal.to_i
+      @currentX = @pair[:x_function].call(newVal)
+      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @currentY)
+      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @currentX)
     end
   end
 
   def updateNumber(viewInteger, viewFraction, value)
+    value = value.abs unless @pair[:degree]
     value = value.round(2).to_s
     integer_part = value.split(".")[0]
     fraction_part = value.split(".")[1]
@@ -193,8 +208,11 @@ class ConverterController < UIViewController
 
   def resetWithPair(pair)
     @pair = pair
-    updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @pair[:x])
-    updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @pair[:y_function].call(@pair[:x]))
+    @currentX = @pair[:x]
+    @currentY = @pair[:y_function].call(@pair[:x])
+
+    updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @currentX)
+    updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @currentY)
 
     updateNumberLabel(@pair[:x_label], @leftColumnNumberLabel, @leftColumnNumber, @leftColumnNumbersWrapper)
     updateNumberLabel(@pair[:y_label], @rightColumnNumberLabel, @rightColumnNumber, @rightColumnNumbersWrapper)
@@ -222,7 +240,7 @@ class ConverterController < UIViewController
 
   def createFractionNumber(value, numberView, wrapper)
    view = UILabel.alloc.initWithFrame(wrapper.frame)
-   view.font = UIFont.fontWithName("HelveticaNeue-Light", size: 18)
+   view.font = UIFont.fontWithName("HelveticaNeue", size: 18)
    view.textColor = UIColor.whiteColor
    updateFractionNumber(value, view, numberView, wrapper)
   end
@@ -239,7 +257,7 @@ class ConverterController < UIViewController
 
   def createNumberLabel(value, numberView, wrapper)
     view = UILabel.alloc.initWithFrame( [[100, 50], [0, 0]] )
-    view.font = UIFont.fontWithName("HelveticaNeue-Regular", size: 18)
+    view.font = UIFont.fontWithName("HelveticaNeue", size: 18)
     view.textAlignment = NSTextAlignmentRight
     view.textColor = UIColor.whiteColor
     updateNumberLabel(value, view, numberView, wrapper)

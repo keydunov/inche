@@ -23,20 +23,9 @@ class ConverterController < UIViewController
     columnsWrapper.addSubview(@leftColumnNumbersWrapper)
 
     @leftColumnNumber = createNumber(@pair[:x], @leftColumnNumbersWrapper)
+    @leftColumnNumberLabel = createNumberLabel(@pair[:x_label], @leftColumnNumber, @leftColumnNumbersWrapper)
 
-    @leftColumnNumberLabel = UILabel.alloc.initWithFrame( [[100, 50], [0, 0]] )
-    @leftColumnNumberLabel.font = UIFont.fontWithName("HelveticaNeue-Regular", size: 18)
-    @leftColumnNumberLabel.textAlignment = NSTextAlignmentRight
-    @leftColumnNumberLabel.text = @pair[:x_label].to_s
-    @leftColumnNumberLabel.sizeToFit
-
-    origin_x = @leftColumnNumbersWrapper.frame.size.width-32.5-@leftColumnNumberLabel.frame.size.width
-    origin_y = @leftColumnNumber.frame.origin.y + @leftColumnNumber.frame.size.height - 75 - @leftColumnNumberLabel.frame.size.height
-
-    @leftColumnNumberLabel.frame = [[origin_x, origin_y], @leftColumnNumberLabel.frame.size]
-    @leftColumnNumberLabel.textColor = UIColor.whiteColor
-    @leftColumnNumbersWrapper.addSubview(@leftColumnNumberLabel)
-
+    @leftColumnNumbersWrapper.addSubview @leftColumnNumberLabel
     @leftColumnNumbersWrapper.addSubview @leftColumnNumber
 
     # # #
@@ -51,7 +40,10 @@ class ConverterController < UIViewController
     columnsWrapper.addSubview(@rightColumnNumbersWrapper)
 
     @rightColumnNumber = createNumber(@pair[:y_function].call(@pair[:x]).round(1), @rightColumnNumbersWrapper)
+    @rightColumnNumberLabel = createNumberLabel(@pair[:y_label], @rightColumnNumber, @rightColumnNumbersWrapper)
+
     @rightColumnNumbersWrapper.addSubview @rightColumnNumber
+    @rightColumnNumbersWrapper.addSubview @rightColumnNumberLabel
 
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
     menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
@@ -102,18 +94,16 @@ class ConverterController < UIViewController
 
     # Stop draging
     if pgr.state == UIGestureRecognizerStateEnded
+      puts "UIGestureRecognizerStateEnded"
       animateDown(@initialView)
     end
 
     newCoord = pgr.locationInView(pgr.view)
-
     deltaY = newCoord.y - @initialDragCoord.y;
-
-    unless @leftColumnNumber.text.to_i == 0 && deltaY > 0
+    newVal =  (@initialValue - deltaY/15).round # пока хардкод
+    if newVal >= 0
       updateBackgroundColor(deltaY)
-
-      new_val =  (@initialValue - deltaY/15).round # пока хардкод
-      updateValues(new_val, @changing)
+      updateValues(newVal, @changing)
     end
   end
 
@@ -156,13 +146,13 @@ class ConverterController < UIViewController
 
   def animate(view, yPosition, up)
     @arrows.center = [view.frame.size.width/2 + view.frame.origin.x, self.view.frame.size.height/2]
-    UIView.animateWithDuration(0.1,
+    UIView.animateWithDuration(0.05,
       animations: lambda {
         view.alpha = 0.0
       },
       completion: lambda { |finished|
         view.frame = [[view.frame.origin.x, yPosition], view.frame.size]
-        UIView.animateWithDuration(0.1,
+        UIView.animateWithDuration(0.05,
           animations: lambda {
             view.alpha = 1.0
             up ? @arrows.alpha = 1.0 : @arrows.alpha = 0.0
@@ -175,8 +165,11 @@ class ConverterController < UIViewController
 
   def resetWithPair(pair)
     @pair = pair
-    @leftColumnNumber.text = @pair[:x].to_s
-    @rightColumnNumber.text = @pair[:y_function].call(@pair[:x]).round(1).to_s
+    updateNumber(@leftColumnNumber, nil, @pair[:x])
+    updateNumber(@rightColumnNumber, nil, @pair[:y_function].call(@pair[:x]))
+
+    updateNumberLabel(@pair[:x_label], @leftColumnNumberLabel, @leftColumnNumber, @leftColumnNumbersWrapper)
+    updateNumberLabel(@pair[:y_label], @rightColumnNumberLabel, @rightColumnNumber, @rightColumnNumbersWrapper)
   end
 
   def animateMoving
@@ -198,6 +191,24 @@ class ConverterController < UIViewController
     label.textColor = UIColor.whiteColor
     label
   end
+
+  def createNumberLabel(value, numberView, wrapper)
+    view = UILabel.alloc.initWithFrame( [[100, 50], [0, 0]] )
+    view.font = UIFont.fontWithName("HelveticaNeue-Regular", size: 18)
+    view.textAlignment = NSTextAlignmentRight
+    view.textColor = UIColor.whiteColor
+    updateNumberLabel(value, view, numberView, wrapper)
+  end
+
+  def updateNumberLabel(value, view, numberView, wrapper)
+    view.text = value.to_s
+    view.sizeToFit
+    origin_x = wrapper.frame.size.width-32.5-view.frame.size.width
+    origin_y = numberView.frame.origin.y + numberView.frame.size.height - 75 - view.frame.size.height
+    view.frame = [[origin_x, origin_y], view.frame.size]
+    view
+  end
+
 
   def preferredStatusBarStyle
     UIStatusBarStyleLightContent

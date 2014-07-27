@@ -3,4 +3,9 @@ class CustomGestureRecognizer < UIPanGestureRecognizer
     super
     self.state = UIGestureRecognizerStateBegan
   end
+
+  def touchesEnded(touches, withEvent: event)
+    super
+    self.state = UIGestureRecognizerStateEnded
+  end
 end

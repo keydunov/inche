@@ -55,24 +55,19 @@ class ConverterController < UIViewController
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
     menuButton.setImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
     menuButton.setImage(UIImage.imageNamed("menu_highlighted"), forState:UIControlStateHighlighted)
-    menuButton.sizeToFit
-
-    menuButton.when(UIControlEventTouchDown) do
-      menuButton.sizeToFit
-      menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
-    end
+    menuButton.frame = [[0, 0], [120, 120]]
 
     # 10 is an offset from bottom, get it from design mockup
-    menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
+    menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 - 30)]
 
     menuButton.when(UIControlEventTouchUpInside) do
       listController = ListController.alloc.init
       listController.delegate = self
       listController.baseColor = @currentColor
-      menuButton.sizeToFit
-      menuButton.center = [self.view.frame.size.width/2, self.view.frame.size.height - (menuButton.frame.size.height/2 + 10)]
       self.presentModalViewController(listController, animated: true)
     end
+    menuButton.imageEdgeInsets = UIEdgeInsetsMake(-20, -20, -20, -20);
+
     self.view.addSubview menuButton
     @menuButton = menuButton
 

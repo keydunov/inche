@@ -63,7 +63,7 @@ class ListController < UIViewController
     cell.delegate = self
     cell.indexPathRow = indexPath.row
 
-    cell.frame = [cell.frame.origin, [@table.frame.size.width, self.view.frame.size.height/7]]
+    cell.frame = [cell.frame.origin, [@table.frame.size.width, self.view.frame.size.height/PAIRS.size]]
 
     if indexPath.row == 0
       cell.backgroundColor = DARK_COLOR_STRING.to_color
@@ -98,19 +98,21 @@ class ListController < UIViewController
       color = (indexPath.row == 0 ? @baseColor : UIColor.whiteColor)
 
       doubleIcon = UIButton.buttonWithType(UIButtonTypeCustom)
-      doubleIcon.frame = [[0, 0], [43, 43]]
-      doubleIcon.layer.cornerRadius = 21.5;
-      doubleIcon.layer.borderWidth = 2;
-      doubleIcon.layer.borderColor = color.CGColor
-      doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2 - 16, cell.frame.size.height/2]
+      doubleIcon.frame = [[0, 0], [cell.frame.size.height, 80]]
+      doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2, cell.frame.size.height/2]
 
-      doubleIconLabel = UILabel.alloc.initWithFrame(doubleIcon.frame)
+      doubleIconLabel = UILabel.alloc.initWithFrame([[0, 0], [43, 43]])
       doubleIconLabel.text = "×2"
       doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 21)
-      doubleIconLabel.sizeToFit
       doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2 - 1]
       doubleIconLabel.color = color
       doubleIconLabel.textAlignment = NSTextAlignmentCenter
+
+      doubleIconLabel.layer.cornerRadius = 21.5;
+      doubleIconLabel.layer.borderWidth = 2;
+      doubleIconLabel.layer.borderColor = color.CGColor
+
+
       doubleIcon.addSubview(doubleIconLabel)
 
       doubleIcon.when(UIControlEventTouchUpInside) do
@@ -119,8 +121,8 @@ class ListController < UIViewController
 
       doubleIcon.when(UIControlEventTouchDown) do
         doubleIcon.layer.cornerRadius = 0;
-        doubleIcon.frame = [doubleIcon.origin, [53, 53]]
-        doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2 - 11, cell.frame.size.height/2]
+        doubleIconLabel.frame = [doubleIcon.origin, [53, 53]]
+        doubleIconLabel.layer.cornerRadius = 0;
         doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2 - 1]
 
         cell = @table.cellForRowAtIndexPath(indexPath)

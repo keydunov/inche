@@ -23,10 +23,12 @@ class ConverterController < UIViewController
     columnsWrapper.addSubview(@leftColumnNumbersWrapper)
 
     @leftColumnNumber = createNumber(@pair[:x], @leftColumnNumbersWrapper)
+    @leftColumnFractionNumber = createFractionNumber("0", @leftColumnNumber, @leftColumnNumbersWrapper)
     @leftColumnNumberLabel = createNumberLabel(@pair[:x_label], @leftColumnNumber, @leftColumnNumbersWrapper)
 
     @leftColumnNumbersWrapper.addSubview @leftColumnNumberLabel
     @leftColumnNumbersWrapper.addSubview @leftColumnNumber
+    @leftColumnNumbersWrapper.addSubview @leftColumnFractionNumber
 
     # # #
     # маска
@@ -39,11 +41,16 @@ class ConverterController < UIViewController
     @rightColumnNumbersWrapper.center = [self.view.frame.size.width*0.75, self.view.frame.size.height/2]
     columnsWrapper.addSubview(@rightColumnNumbersWrapper)
 
-    @rightColumnNumber = createNumber(@pair[:y_function].call(@pair[:x]).round(1), @rightColumnNumbersWrapper)
+    value = @pair[:y_function].call(@pair[:x]).round(2).to_s
+    integer_part = value.split(".")[0]
+    fraction_part = value.split(".")[1]
+    @rightColumnNumber = createNumber(integer_part, @rightColumnNumbersWrapper)
+    @rightColumnFractionNumber = createFractionNumber(fraction_part, @rightColumnNumber, @rightColumnNumbersWrapper)
     @rightColumnNumberLabel = createNumberLabel(@pair[:y_label], @rightColumnNumber, @rightColumnNumbersWrapper)
 
     @rightColumnNumbersWrapper.addSubview @rightColumnNumber
     @rightColumnNumbersWrapper.addSubview @rightColumnNumberLabel
+    @rightColumnNumbersWrapper.addSubview @rightColumnFractionNumber
 
     menuButton = UIButton.buttonWithType(UIButtonTypeCustom)
     menuButton.setBackgroundImage(UIImage.imageNamed("menu"), forState:UIControlStateNormal)
@@ -71,6 +78,8 @@ class ConverterController < UIViewController
 
     pgr = CustomGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
     columnsWrapper.addGestureRecognizer(pgr)
+
+    resetWithPair(ListController::PAIRS[0][:single])
   end
 
   def handlePan(pgr)
@@ -118,11 +127,11 @@ class ConverterController < UIViewController
 
   def updateValues(newVal, changing)
     if changing == :x
-      updateNumber(@leftColumnNumber, nil, newVal)
-      updateNumber(@rightColumnNumber, nil, @pair[:y_function].call(newVal))
+      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, newVal)
+      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @pair[:y_function].call(newVal))
     else
-      updateNumber(@rightColumnNumber, nil, newVal)
-      updateNumber(@leftColumnNumber, nil, @pair[:x_function].call(newVal))
+      updateNumber(@rightColumnNumber, @rightColumnFractionNumber, newVal)
+      updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @pair[:x_function].call(newVal))
     end
   end
 
@@ -131,9 +140,14 @@ class ConverterController < UIViewController
     integer_part = value.split(".")[0]
     fraction_part = value.split(".")[1]
 
+    fontSize = integer_part.to_i >= 100 ? 55 : 70
+    viewInteger.font = UIFont.fontWithName("HelveticaNeue-Light", size: fontSize)
+
     viewInteger.text = integer_part
     viewInteger.sizeToFit
     viewInteger.center = [viewInteger.superview.frame.size.width/2, viewInteger.superview.frame.size.height/2]
+
+    updateFractionNumber(fraction_part, viewFraction, viewInteger, viewFraction.superview)
   end
 
   def animateDown(view)
@@ -165,8 +179,8 @@ class ConverterController < UIViewController
 
   def resetWithPair(pair)
     @pair = pair
-    updateNumber(@leftColumnNumber, nil, @pair[:x])
-    updateNumber(@rightColumnNumber, nil, @pair[:y_function].call(@pair[:x]))
+    updateNumber(@leftColumnNumber, @leftColumnFractionNumber, @pair[:x])
+    updateNumber(@rightColumnNumber, @rightColumnFractionNumber, @pair[:y_function].call(@pair[:x]))
 
     updateNumberLabel(@pair[:x_label], @leftColumnNumberLabel, @leftColumnNumber, @leftColumnNumbersWrapper)
     updateNumberLabel(@pair[:y_label], @rightColumnNumberLabel, @rightColumnNumber, @rightColumnNumbersWrapper)
@@ -190,6 +204,23 @@ class ConverterController < UIViewController
     label.backgroundColor = UIColor.clearColor
     label.textColor = UIColor.whiteColor
     label
+  end
+
+  def createFractionNumber(value, numberView, wrapper)
+   view = UILabel.alloc.initWithFrame(wrapper.frame)
+   view.font = UIFont.fontWithName("HelveticaNeue-Light", size: 18)
+   view.textColor = UIColor.whiteColor
+   updateFractionNumber(value, view, numberView, wrapper)
+  end
+
+  def updateFractionNumber(value, view, numberView, wrapper)
+   origin_x = numberView.frame.origin.x+numberView.frame.size.width
+   origin_y = numberView.frame.origin.y + numberView.frame.size.height - view.frame.size.height - 11
+   view.frame = [[origin_x, origin_y], view.frame.size]
+   view.text = "." + value.to_s
+   view.sizeToFit
+   view.hidden = (value.to_i <= 0)
+   view
   end
 
   def createNumberLabel(value, numberView, wrapper)

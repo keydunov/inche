@@ -6,23 +6,24 @@ class ListController < UIViewController
   PAIRS = [
     {
       name: "INCH ‹› CENTIMETER",
-      single: { x: 1, x_function: ->(y) { 2.54000000000003*y }, y_function: ->(x) { 0.39370078740157*x }, x_label: "in", y_label: "cm" },
-      double: { x: 1, x_function: ->(y) { 6.4516*y }, y_function: ->(x) { 0.15500031000062*x }, x_label: "sq in", y_label: "sq cm" }
+      single: { x: 1, x_function: ->(y) { 0.39370078740157*y }, y_function: ->(x) { 2.54000000000003*x }, x_label: "in", y_label: "cm" },
+      double: { x: 1, x_function: ->(y) { 0.15500031000062*y }, y_function: ->(x) { 6.4516*x }, x_label: "sq in", y_label: "sq cm" }
     },
     {
       name: "MILE ‹› KILOMETRE",
-      single: { x: 1, x_function: ->(y) { 1.609344*y }, y_function: ->(x) { 0.62137119223733*x }, x_label: "mi", y_label: "km" },
-      double: { x: 1, x_function: ->(y) { 2.589988110336*y }, y_function: ->(x) { 0.38610215854245*x }, x_label: "sq mi", y_label: "sq km" }
+      single: { x: 1, x_function: ->(y) { 0.62137119223733*y }, y_function: ->(x) { 1.609344*x }, x_label: "mi", y_label: "km" },
+      double: { x: 1, x_function: ->(y) { 0.38610215854245*y }, y_function: ->(x) { 2.589988110336*x }, x_label: "sq mi", y_label: "sq km" }
     },
     {
       name: "FOOT ‹› METER",
-      single: { x: 1, x_function: ->(y) { 0.3048*y }, y_function: ->(x) { 3.28084*x }, x_label: "ft", y_label: "m" },
-      double: { x: 1, x_function: ->(y) { 0.092903*y }, y_function: ->(x) { 10.7639*x }, x_label: "sq ft", y_label: "sq m" }
+      single: { x: 1, x_function: ->(y) { 3.28084*y }, y_function: ->(x) { 0.3048*x }, x_label: "ft", y_label: "m" },
+      double: { x: 1, x_function: ->(y) { 10.7639*y }, y_function: ->(x) { 0.092903*x }, x_label: "sq ft", y_label: "sq m" }
     },
-    { name: "CELSIUS ‹› FAHRENHEIT", x: 27, y_function: ->(x) { (x-32)*(5/9) }, x_function: ->(y) { (y*(9/5)) + 32 }, degree: true },
+    { name: "CELSIUS ‹› FAHRENHEIT",
+      x: 27, y_function: ->(x) { (x-32)*(5/9) }, x_function: ->(y) { (y*(9/5)) + 32 }, degree: true },
 
     { name: "POUND ‹› KILOGRAM",
-      x: 1, y_function: ->(x) { x * 2.2046223302272 }, x_function: ->(y) { y/2.2046223302272 }, x_label: "lb", y_label: "kg" },
+      x: 1, y_function: ->(x) { x * 0.453592 }, x_function: ->(y) { y*2.20462 }, x_label: "lb", y_label: "kg" },
 
     { name: "OUNCE ‹› GRAM",
       x: 1, y_function: ->(x) { x * 28.349523125 }, x_function: ->(y) { y*0.03527396194 }, x_label: "oz", y_label: "gr" },

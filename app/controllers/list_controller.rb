@@ -147,4 +147,8 @@ class ListController < UIViewController
     self.delegate.resetWithPair(pair)
     self.dismissModalViewControllerAnimated(true)
   end
+
+  def prefersStatusBarHidden
+    true
+  end
 end

@@ -1,6 +1,6 @@
 class OptionCellView < UITableViewCell
   attr_accessor :delegate, :indexPathRow, :double
-  attr_accessor :mask, :label
+  attr_accessor :mask, :label, :doubleIcon, :doubleIconLabel
   MASK_ALPHA_TAG = 101
 
   def addViews
@@ -12,8 +12,25 @@ class OptionCellView < UITableViewCell
     @label = UILabel.alloc.initWithFrame(CGRectZero)
     @label.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 20)
     @label.tag = 100
-
     self.addSubview(@label)
+
+
+    @doubleIcon = UIButton.buttonWithType(UIButtonTypeCustom)
+    @doubleIcon.frame = [[0, 0], [self.frame.size.height, 80]]
+    @doubleIcon.center = [self.frame.size.width - doubleIcon.frame.size.width/2, self.frame.size.height/2]
+
+    @doubleIconLabel = UILabel.alloc.initWithFrame([[0, 0], [43, 43]])
+    doubleIconLabel.text = "×2"
+    doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 21)
+    doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2 - 1]
+    doubleIconLabel.textAlignment = NSTextAlignmentCenter
+
+    doubleIconLabel.layer.cornerRadius = 21.5;
+    doubleIconLabel.layer.borderWidth = 2;
+
+    @doubleIcon.addSubview(doubleIconLabel)
+
+    self.addSubview(@doubleIcon)
   end
 
   def setMaskAlpha(maskAlpha)
@@ -22,33 +39,16 @@ class OptionCellView < UITableViewCell
   end
 
   def setHighlighted(highlighted, animated: animated)
-    label = self.viewWithTag(100)
-
-    #if highlighted
-    #  runAnimation(label)
-    #else
-    #  label.subviews.each { |sv| sv.removeFromSuperview }
-    #end
-  end
-
-  def runAnimation(label)
-    label.subviews.each { |sv| sv.removeFromSuperview }
-    line = UIView.alloc.initWithFrame([[0, label.frame.size.height - 2], [0, 2]])
-    line.backgroundColor = label.textColor
-    label.addSubview(line)
-
-    UIView.animateWithDuration(0.5,
-      animations: lambda {
-        line.frame = [line.frame.origin, [label.frame.size.width, 2]]
-      },
-      completion: lambda { |finished|
-        if double
-          pair = ListController::PAIRS[indexPathRow][:double]
-        else
-          pair = ListController::PAIRS[indexPathRow][:single] || ListController::PAIRS[indexPathRow]
-        end
-        delegate.showConverter(pair)
-      }
-    )
+    if highlighted
+      @line ||= begin
+        line = UIView.alloc.initWithFrame([[0, label.frame.size.height - 2], [label.frame.size.width, 2]])
+        line.backgroundColor = label.textColor
+        @label.addSubview(line)
+        line
+      end
+      @line.alpha = 1.0
+    else
+      @line.alpha = 0.0 if @line
+    end
   end
 end

@@ -88,44 +88,28 @@ class ListController < UIViewController
     end
 
     if PAIRS[indexPath.row][:double]
-      #TODO: extract into helper method
+      cell.doubleIcon.hidden = false
       color = (indexPath.row == 0 ? @baseColor : UIColor.whiteColor)
+      cell.doubleIconLabel.color = color
+      cell.doubleIconLabel.layer.borderColor = color.CGColor
 
-      doubleIcon = UIButton.buttonWithType(UIButtonTypeCustom)
-      doubleIcon.frame = [[0, 0], [cell.frame.size.height, 80]]
-      doubleIcon.center = [cell.frame.size.width - doubleIcon.frame.size.width/2, cell.frame.size.height/2]
+      cell.doubleIcon.when(UIControlEventTouchDown) do
+        cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [53, 53]]
+        cell.doubleIconLabel.layer.cornerRadius = 0;
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 - 1]
+      end
 
-      doubleIconLabel = UILabel.alloc.initWithFrame([[0, 0], [43, 43]])
-      doubleIconLabel.text = "×2"
-      doubleIconLabel.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 21)
-      doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2 - 1]
-      doubleIconLabel.color = color
-      doubleIconLabel.textAlignment = NSTextAlignmentCenter
-
-      doubleIconLabel.layer.cornerRadius = 21.5;
-      doubleIconLabel.layer.borderWidth = 2;
-      doubleIconLabel.layer.borderColor = color.CGColor
-
-
-      doubleIcon.addSubview(doubleIconLabel)
-
-      doubleIcon.when(UIControlEventTouchUpInside) do
+      cell.doubleIcon.when(UIControlEventTouchUpInside) do
         showConverter(PAIRS[indexPath.row][:double])
       end
 
-      doubleIcon.when(UIControlEventTouchDown) do
-        doubleIcon.layer.cornerRadius = 0;
-        doubleIconLabel.frame = [doubleIcon.origin, [53, 53]]
-        doubleIconLabel.layer.cornerRadius = 0;
-        doubleIconLabel.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2 - 1]
-
-        cell = @table.cellForRowAtIndexPath(indexPath)
-        cell.double = true
-        cell.runAnimation(cell.viewWithTag(100))
+      cell.doubleIcon.when(UIControlEventTouchDragOutside) do
+        cell.doubleIconLabel.layer.cornerRadius = 21.5;
+        cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [43, 43]]
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 - 1]
       end
-
-
-      cell.addSubview(doubleIcon)
+    else
+      cell.doubleIcon.hidden = true
     end
 
     cell.selectionStyle = UITableViewCellSelectionStyleNone
@@ -145,15 +129,4 @@ class ListController < UIViewController
   def prefersStatusBarHidden
     true
   end
-
-  #def tableView(tableView, heightForHeaderInSection: section)
-  #  1
-  #end
-
-  #def tableView(tableView, viewForHeaderInSection: section)
-  #  view = UIView.alloc.initWithFrame([[0, 0], [tableView.bounds.size.width, 1]])
-  #  #view.backgroundColor = DARK_COLOR_STRING.to_color
-  #  view.backgroundColor = UIColor.redColor
-  #  view
-  #end
 end

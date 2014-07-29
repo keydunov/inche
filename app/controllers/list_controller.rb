@@ -32,15 +32,20 @@ class ListController < UIViewController
   ]
 
   def viewDidLoad
+    super
     self.edgesForExtendedLayout = UIRectEdgeNone
 
-    tableFrame = [[0, 20], [self.view.size.width, self.view.size.height - 20]]
+    tableFrame = [[0, 0], [self.view.size.width, self.view.size.height]]
     @table = UITableView.alloc.initWithFrame(self.view.bounds, style: UITableViewStylePlain)
 
     @table.delegate = self
     @table.dataSource = self
     @table.separatorStyle = UITableViewCellSeparatorStyleNone
     @table.alwaysBounceVertical = false
+    @table.backgroundColor = DARK_COLOR_STRING.to_color
+
+    @table.contentInset = UIEdgeInsetsMake(0.0, 0.0, 10.0, 0.0)
+    @table.showsVerticalScrollIndicator = false
 
     self.view.addSubview(@table)
   end
@@ -57,41 +62,30 @@ class ListController < UIViewController
     @reuse_identifier ||= "CELL_IDENTIFIER"
 
     cell = tableView.dequeueReusableCellWithIdentifier(@reuse_identifier) || begin
-      OptionCellView.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:@reuse_identifier)
+      newCell = OptionCellView.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:@reuse_identifier)
+      newCell.frame = [newCell.frame.origin, [@table.frame.size.width, self.view.frame.size.height/PAIRS.size]]
+      newCell.addViews
+      newCell
     end
 
     cell.delegate = self
     cell.indexPathRow = indexPath.row
 
-    cell.frame = [cell.frame.origin, [@table.frame.size.width, self.view.frame.size.height/PAIRS.size]]
+    attributedString = NSMutableAttributedString.alloc.initWithString(PAIRS[indexPath.row][:name])
+    attributedString.addAttribute(NSKernAttributeName, value: 1.4, range: NSMakeRange(0,9))
+    cell.label.attributedText = attributedString
+    cell.label.sizeToFit
+    cell.label.frame = [[16, cell.frame.size.height/2 - cell.label.frame.size.height/2], [cell.label.frame.size.width, cell.label.frame.size.height + 2]]
 
     if indexPath.row == 0
       cell.backgroundColor = DARK_COLOR_STRING.to_color
-      cell.alpha = 1.0
+      cell.mask.alpha = 0
+      cell.label.textColor = @baseColor
     else
-      mask = UIView.alloc.initWithFrame(cell.bounds)
-      mask.backgroundColor = DARK_COLOR_STRING.to_color
-      mask.alpha = 0.1 * (indexPath.row - 1)
-      cell.addSubview(mask)
       cell.backgroundColor = @baseColor
+      cell.mask.alpha = 0.1 * (indexPath.row - 1)
+      cell.label.textColor = UIColor.whiteColor
     end
-
-    label = UILabel.alloc.initWithFrame(CGRectZero)
-    label.font = UIFont.fontWithName("HelveticaNeue-Medium", size: 20)
-    attributedString = NSMutableAttributedString.alloc.initWithString(PAIRS[indexPath.row][:name])
-    attributedString.addAttribute(NSKernAttributeName, value: 1.4, range: NSMakeRange(0,9))
-    label.attributedText = attributedString
-    label.sizeToFit
-    label.frame = [[16, cell.frame.size.height/2 - label.frame.size.height/2], [label.frame.size.width, label.frame.size.height + 2]]
-    label.tag = 100
-
-    if indexPath.row == 0
-      label.textColor = @baseColor
-    else
-      label.textColor = UIColor.whiteColor
-    end
-
-    cell.addSubview(label)
 
     if PAIRS[indexPath.row][:double]
       #TODO: extract into helper method
@@ -151,4 +145,15 @@ class ListController < UIViewController
   def prefersStatusBarHidden
     true
   end
+
+  #def tableView(tableView, heightForHeaderInSection: section)
+  #  1
+  #end
+
+  #def tableView(tableView, viewForHeaderInSection: section)
+  #  view = UIView.alloc.initWithFrame([[0, 0], [tableView.bounds.size.width, 1]])
+  #  #view.backgroundColor = DARK_COLOR_STRING.to_color
+  #  view.backgroundColor = UIColor.redColor
+  #  view
+  #end
 end

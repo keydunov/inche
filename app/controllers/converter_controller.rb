@@ -19,7 +19,7 @@ class ConverterController < UIViewController
 
     # левая колонка
     @leftColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [width_half, NUMBERS_WRAPPER_HEIGHT]]
-    @leftColumnNumbersWrapper.center = [self.view.frame.size.width*0.25, self.view.frame.size.height/2]
+    @leftColumnNumbersWrapper.center = [self.view.frame.size.width*0.25, self.view.frame.size.height/2 - 30]
     columnsWrapper.addSubview(@leftColumnNumbersWrapper)
 
     @leftColumnNumber = createNumber(@pair[:x], @leftColumnNumbersWrapper)
@@ -38,7 +38,7 @@ class ConverterController < UIViewController
     columnsWrapper.addSubview @rightColumnMask
 
     @rightColumnNumbersWrapper = UIView.alloc.initWithFrame [[0, 0], [width_half, NUMBERS_WRAPPER_HEIGHT]]
-    @rightColumnNumbersWrapper.center = [self.view.frame.size.width*0.75, self.view.frame.size.height/2]
+    @rightColumnNumbersWrapper.center = [self.view.frame.size.width*0.75, self.view.frame.size.height/2 - 30]
     columnsWrapper.addSubview(@rightColumnNumbersWrapper)
 
     value = @pair[:y_function].call(@pair[:x]).round(2).to_s
@@ -104,8 +104,9 @@ class ConverterController < UIViewController
       EM.cancel_timer @downAnimationTimers.each { |timer| EM.cancel_timer timer }
       @downAnimationTimers = []
 
-      readyToConvert(@changing)
+      readyToConvert(@changing, pgr.locationInView(pgr.view).y)
     end
+
 
     newCoord = pgr.locationInView(pgr.view)
     deltaY = newCoord.y - @initialDragCoord.y;
@@ -117,10 +118,11 @@ class ConverterController < UIViewController
       updateValues(newVal, @changing)
     end
 
+    updateArrowsPosition(newCoord.y)
+
     # Stop draging
     if pgr.state == UIGestureRecognizerStateEnded
-      changing = @changing
-      @downAnimationTimers << EM.add_timer(0.15) { animateDown(changing) }
+      @downAnimationTimers << EM.add_timer(0.15) { animateDown }
       @changing = nil
     end
   end
@@ -155,7 +157,7 @@ class ConverterController < UIViewController
     fraction_part = value.split(".")[1]
 
     fontSize = integer_part.to_i.abs >= 100 ? 55 : 70
-    viewInteger.font = UIFont.fontWithName("HelveticaNeue-Light", size: fontSize)
+    viewInteger.font = UIFont.fontWithName("FARRAY", size: fontSize)
 
     viewInteger.text = integer_part
     viewInteger.sizeToFit
@@ -164,7 +166,7 @@ class ConverterController < UIViewController
     updateFractionNumber(fraction_part, viewFraction, viewInteger, viewFraction.superview)
   end
 
-  def readyToConvert(changing)
+  def readyToConvert(changing, arrowsCenterY)
     self.view.layer.removeAllAnimations
     if changing == :x
       activeView, passiveView = @leftColumnNumbersWrapper, @rightColumnNumbersWrapper
@@ -172,29 +174,39 @@ class ConverterController < UIViewController
       passiveView, activeView = @leftColumnNumbersWrapper, @rightColumnNumbersWrapper
     end
 
-    @arrows.center = [activeView.frame.size.width/2 + activeView.frame.origin.x, self.view.frame.size.height/2]
+    arrowsY = arrowsCenterY - @arrows.frame.size.height/2 + 15
+    @arrows.frame = [[activeView.frame.size.width/2 + activeView.frame.origin.x - @arrows.frame.size.width/2, arrowsY], @arrows.frame.size]
     @arrows.alpha = 1.0
-    activeView.frame = [[activeView.frame.origin.x, 0], activeView.frame.size]
-    passiveView.frame = [[passiveView.frame.origin.x, 200], passiveView.frame.size]
+    activeView.frame = [[activeView.frame.origin.x, -10], activeView.frame.size]
+    passiveView.frame = [[passiveView.frame.origin.x, -10], passiveView.frame.size]
   end
 
-  def animateDown(changing)
-    view = changing == :x ? @leftColumnNumbersWrapper : @rightColumnNumbersWrapper
-    yPosition = 200
+  def updateArrowsPosition(arrowsCenterY)
+    arrowsY = arrowsCenterY - @arrows.frame.size.height/2 + 15
+    arrowsY = [self.view.frame.size.height - @arrows.frame.size.height, arrowsY].min
+    arrowsY = [0, arrowsY].max
+    @arrows.frame = [[@arrows.frame.origin.x, arrowsY], @arrows.frame.size]
+  end
+
+  def animateDown
     @arrows.center = [view.frame.size.width/2 + view.frame.origin.x, self.view.frame.size.height/2]
     @arrows.alpha = 0.0
+    yPosition = (self.view.frame.size.height/2 - 30) - @leftColumnNumbersWrapper.frame.size.height/2
     UIView.animateWithDuration(0.1,
       animations: lambda {
-        view.alpha = 0.0
+        @leftColumnNumbersWrapper.alpha = 0.0
+        @rightColumnNumbersWrapper.alpha = 0.0
       },
       completion: lambda { |finished|
-        view.frame = [[view.frame.origin.x, yPosition], view.frame.size]
+        @leftColumnNumbersWrapper.frame = [[@leftColumnNumbersWrapper.frame.origin.x, yPosition], @leftColumnNumbersWrapper.frame.size]
+        @rightColumnNumbersWrapper.frame = [[@rightColumnNumbersWrapper.frame.origin.x, yPosition], @rightColumnNumbersWrapper.frame.size]
         UIView.animateWithDuration(0.2,
           animations: lambda {
-            view.alpha = 1.0
+            @leftColumnNumbersWrapper.alpha = 1.0
+            @rightColumnNumbersWrapper.alpha = 1.0
           },
           completion: lambda { |finished|
-            readyToConvert(@changing) if @changing
+            readyToConvert(@changing, @initialDragCoord.y) if @changing
           }
         )
       }
@@ -223,7 +235,7 @@ class ConverterController < UIViewController
 
   def createNumber(value, wrapper)
     label = UILabel.alloc.initWithFrame(wrapper.frame)
-    label.font = UIFont.fontWithName("HelveticaNeue-Light", size: 70)
+    label.font = UIFont.fontWithName("FARRAY", size: 70)
     label.textAlignment = NSTextAlignmentCenter
     label.text = value.to_s
     label.sizeToFit
@@ -235,14 +247,14 @@ class ConverterController < UIViewController
 
   def createFractionNumber(value, numberView, wrapper)
    view = UILabel.alloc.initWithFrame(wrapper.frame)
-   view.font = UIFont.fontWithName("HelveticaNeue", size: 18)
+   view.font = UIFont.fontWithName("FARRAY", size: 18)
    view.textColor = UIColor.whiteColor
    updateFractionNumber(value, view, numberView, wrapper)
   end
 
   def updateFractionNumber(value, view, numberView, wrapper)
    origin_x = numberView.frame.origin.x+numberView.frame.size.width
-   origin_y = numberView.frame.origin.y + numberView.frame.size.height - view.frame.size.height - (numberView.frame.size.height*0.13)
+   origin_y = numberView.frame.origin.y + numberView.frame.size.height - view.frame.size.height - (numberView.frame.size.height*0.04)
    view.frame = [[origin_x, origin_y], view.frame.size]
    view.text = "." + value.to_s
    view.sizeToFit
@@ -252,7 +264,7 @@ class ConverterController < UIViewController
 
   def createNumberLabel(value, numberView, wrapper)
     view = UILabel.alloc.initWithFrame( [[100, 50], [0, 0]] )
-    view.font = UIFont.fontWithName("HelveticaNeue", size: 18)
+    view.font = UIFont.fontWithName("FARRAY", size: 18)
     view.textAlignment = NSTextAlignmentRight
     view.textColor = UIColor.whiteColor
     updateNumberLabel(value, view, numberView, wrapper)
@@ -261,14 +273,14 @@ class ConverterController < UIViewController
   def updateNumberLabel(value, view, numberView, wrapper)
     view.text = value.to_s
     view.sizeToFit
-    origin_x = wrapper.frame.size.width-32.5-view.frame.size.width
+    origin_x = wrapper.frame.size.width-40-view.frame.size.width
     origin_y = numberView.frame.origin.y + numberView.frame.size.height - 75 - view.frame.size.height
     view.frame = [[origin_x, origin_y], view.frame.size]
     view
   end
 
 
-  def preferredStatusBarStyle
-    UIStatusBarStyleLightContent
+  def prefersStatusBarHidden
+    true
   end
 end

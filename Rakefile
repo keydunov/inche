@@ -16,6 +16,8 @@ Motion::Project::App.setup do |app|
 
   app.frameworks << "QuartzCore"
 
+  app.fonts = ['FARRAY.otf']
+
   app.icons = ["Icon-60.png", "Icon-60@2x.png", "Icon-72.png", "Icon-72@2x.png"]
   app.interface_orientations = [:portrait]
 

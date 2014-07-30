@@ -44,7 +44,7 @@ class ListController < UIViewController
     @table.alwaysBounceVertical = false
     @table.backgroundColor = DARK_COLOR_STRING.to_color
 
-    @table.contentInset = UIEdgeInsetsMake(0.0, 0.0, 10.0, 0.0)
+    @table.contentInset = UIEdgeInsetsMake(0.5, 0.0, 0.0, 0.0)
     @table.showsVerticalScrollIndicator = false
 
     self.view.addSubview(@table)
@@ -75,7 +75,10 @@ class ListController < UIViewController
     attributedString.addAttribute(NSKernAttributeName, value: 1.4, range: NSMakeRange(0,9))
     cell.label.attributedText = attributedString
     cell.label.sizeToFit
-    cell.label.frame = [[16, cell.frame.size.height/2 - cell.label.frame.size.height/2], [cell.label.frame.size.width, cell.label.frame.size.height + 2]]
+    cell.label.frame = [[16, cell.frame.size.height/2 - cell.label.frame.size.height/2],
+                        [cell.label.frame.size.width, cell.label.frame.size.height + 6.5]]
+
+
 
     if indexPath.row == 0
       cell.backgroundColor = DARK_COLOR_STRING.to_color
@@ -87,16 +90,19 @@ class ListController < UIViewController
       cell.label.textColor = UIColor.whiteColor
     end
 
+    cell.line.frame = [[0, cell.label.frame.size.height - 2.5], [cell.label.frame.size.width, 2.5]]
+    cell.line.backgroundColor = cell.label.color
+
     if PAIRS[indexPath.row][:double]
       cell.doubleIcon.hidden = false
       color = (indexPath.row == 0 ? @baseColor : UIColor.whiteColor)
-      cell.doubleIconLabel.color = color
+      cell.doubleIconLabelText.color = color
       cell.doubleIconLabel.layer.borderColor = color.CGColor
 
       cell.doubleIcon.when(UIControlEventTouchDown) do
         cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [53, 53]]
         cell.doubleIconLabel.layer.cornerRadius = 0;
-        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 - 1]
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 + 2]
       end
 
       cell.doubleIcon.when(UIControlEventTouchUpInside) do
@@ -106,19 +112,30 @@ class ListController < UIViewController
       cell.doubleIcon.when(UIControlEventTouchDragOutside) do
         cell.doubleIconLabel.layer.cornerRadius = 21.5;
         cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [43, 43]]
-        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 - 1]
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 + 2]
+      end
+
+      cell.doubleIcon.when(UIControlEventTouchDragInside) do
+        cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [53, 53]]
+        cell.doubleIconLabel.layer.cornerRadius = 0;
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 + 2]
+      end
+
+      cell.doubleIcon.when(UIControlEventTouchCancel) do
+        cell.doubleIconLabel.layer.cornerRadius = 21.5;
+        cell.doubleIconLabel.frame = [cell.doubleIcon.origin, [43, 43]]
+        cell.doubleIconLabel.center = [cell.doubleIcon.frame.size.width/2, cell.doubleIcon.frame.size.height/2 + 2]
       end
     else
       cell.doubleIcon.hidden = true
     end
-
-    cell.selectionStyle = UITableViewCellSelectionStyleNone
 
     cell
   end
 
   def tableView(tableView, didSelectRowAtIndexPath: indexPath)
     showConverter(PAIRS[indexPath.row][:single] || PAIRS[indexPath.row])
+    indexPath
   end
 
   def showConverter(pair)

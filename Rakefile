@@ -21,6 +21,8 @@ Motion::Project::App.setup do |app|
   app.icons = ["Icon-60.png", "Icon-60@2x.png", "Icon-72.png", "Icon-72@2x.png"]
   app.interface_orientations = [:portrait]
 
+  app.info_plist['UIStatusBarHidden'] = true
+
   app.development do
     app.identifier = 'com.b1nary.inche'
     app.provisioning_profile = "/Users/artyomkeydunov/provision_profiles/Inche_Development.mobileprovision"

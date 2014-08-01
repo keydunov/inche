@@ -223,6 +223,15 @@ class ConverterController < UIViewController
 
     updateNumberLabel(@pair[:x_label], @leftColumnNumberLabel, @leftColumnNumber, @leftColumnNumbersWrapper)
     updateNumberLabel(@pair[:y_label], @rightColumnNumberLabel, @rightColumnNumber, @rightColumnNumbersWrapper)
+
+    resetViews
+  end
+
+  def resetViews
+    @arrows.alpha = 0.0
+    yPosition = (self.view.frame.size.height/2 - 30) - @leftColumnNumbersWrapper.frame.size.height/2
+    @leftColumnNumbersWrapper.frame = [[@leftColumnNumbersWrapper.frame.origin.x, yPosition], @leftColumnNumbersWrapper.frame.size]
+    @rightColumnNumbersWrapper.frame = [[@rightColumnNumbersWrapper.frame.origin.x, yPosition], @rightColumnNumbersWrapper.frame.size]
   end
 
   def animateMoving

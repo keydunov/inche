@@ -12,7 +12,7 @@ require 'bubble-wrap/reactor'
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'Inche'
+  app.name = 'Inché'
 
   app.frameworks << "QuartzCore"
 

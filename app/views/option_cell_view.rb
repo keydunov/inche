@@ -45,6 +45,15 @@ class OptionCellView < UITableViewCell
     self.addSubview(@doubleIcon)
   end
 
+  def touchesBegan(touches, withEvent: event)
+    super
+  end
+
+  def touchesEnded(touches, withEvent: event)
+    super
+    delegate.showConverter(ListController::PAIRS[indexPathRow][:single] || ListController::PAIRS[indexPathRow])
+  end
+
   def setHighlighted(highlighted, animated:animated)
     self.line.hidden = !highlighted
     super

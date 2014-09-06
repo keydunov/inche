@@ -133,11 +133,6 @@ class ListController < UIViewController
     cell
   end
 
-  def tableView(tableView, didSelectRowAtIndexPath: indexPath)
-    showConverter(PAIRS[indexPath.row][:single] || PAIRS[indexPath.row])
-    indexPath
-  end
-
   def showConverter(pair)
     self.delegate.resetWithPair(pair)
     self.dismissModalViewControllerAnimated(true)

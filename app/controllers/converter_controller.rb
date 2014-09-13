@@ -6,6 +6,8 @@ class ConverterController < UIViewController
   INITIAL_COLOR = UIColor.colorWithHue((160/360.0), saturation: (54/100.0), brightness: (78/100.0), alpha: 1)
   DARK_COLOR = "#3c3c3c".to_color
 
+  attr_reader :currentColor
+
   def viewDidLoad
     @pair = ListController::PAIRS[0][:single]
     # Половина ширина экраны

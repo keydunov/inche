@@ -85,6 +85,19 @@ class ConverterController < UIViewController
     resetWithPair(ListController::PAIRS[0][:single])
   end
 
+  def viewDidAppear(animated)
+    super
+    auto_present_modal unless @already_auto_presented_modal
+  end
+
+  def auto_present_modal
+    listController = ListController.alloc.init
+    listController.delegate = self
+    listController.baseColor = @currentColor
+    @already_auto_presented_modal = true
+    self.presentModalViewController(listController, animated: false)
+  end
+
   def handlePan(pgr)
     @downAnimationTimers ||= []
     # Start draging

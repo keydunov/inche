@@ -35,7 +35,7 @@ class OptionCellView < UITableViewCell
     @doubleIconLabelText = UILabel.alloc.initWithFrame([[0, 0], doubleIconLabel.frame.size])
     doubleIconLabelText.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2]
     doubleIconLabelText.text = "sq"
-    doubleIconLabelText.font = UIFont.fontWithName("FARRAY", size: 18)
+    doubleIconLabelText.font = UIFont.fontWithName("FARRAY", size: 16)
     doubleIconLabelText.textAlignment = NSTextAlignmentCenter
     doubleIcon.addSubview doubleIconLabelText
 

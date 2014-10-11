@@ -14,7 +14,8 @@ class ConverterController < UIViewController
     @currentColor = INITIAL_COLOR
 
     self.view.backgroundColor = @currentColor
-    columnsWrapper = UIView.alloc.initWithFrame(self.view.bounds)
+    columnsWrapper = @columnsWrapper = UIView.alloc.initWithFrame(self.view.bounds)
+    @columnsWrapper.alpha = 0
     self.view.addSubview(columnsWrapper)
 
     # левая колонка
@@ -95,6 +96,7 @@ class ConverterController < UIViewController
     listController.delegate = self
     listController.baseColor = @currentColor
     @already_auto_presented_modal = true
+    @columnsWrapper.alpha = 1
     self.presentModalViewController(listController, animated: false)
   end
 

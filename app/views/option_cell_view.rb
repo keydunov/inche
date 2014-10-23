@@ -21,7 +21,6 @@ class OptionCellView < UITableViewCell
     line.hidden = true
     @label.addSubview(line)
 
-
     @doubleIcon = UIButton.buttonWithType(UIButtonTypeCustom)
     @doubleIcon.frame = [[0, 0], [self.frame.size.height, 80]]
     @doubleIcon.center = [self.frame.size.width - doubleIcon.frame.size.width/2, self.frame.size.height/2]
@@ -35,7 +34,7 @@ class OptionCellView < UITableViewCell
     @doubleIconLabelText = UILabel.alloc.initWithFrame([[0, 0], doubleIconLabel.frame.size])
     doubleIconLabelText.center = [doubleIcon.frame.size.width/2, doubleIcon.frame.size.height/2]
     doubleIconLabelText.text = "sq"
-    doubleIconLabelText.font = UIFont.fontWithName("FARRAY", size: 16)
+    doubleIconLabelText.font = UIFont.fontWithName("FARRAY", size: 18)
     doubleIconLabelText.textAlignment = NSTextAlignmentCenter
     doubleIcon.addSubview doubleIconLabelText
 

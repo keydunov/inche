@@ -83,6 +83,12 @@ class ConverterController < UIViewController
     pgr = CustomGestureRecognizer.alloc.initWithTarget(self, action: "handlePan:")
     columnsWrapper.addGestureRecognizer(pgr)
 
+    # ------ Show splash screen image ------
+    # Doing it to make transition from splash to actual app smooth
+    @splash_view = UIImageView.alloc.initWithImage(UIImage.imageNamed("Default-568h@2x"))
+    @splash_view.sizeToFit
+    self.view.addSubview(@splash_view)
+
     resetWithPair(ListController::PAIRS[0][:single])
   end
 
@@ -97,6 +103,7 @@ class ConverterController < UIViewController
     listController.baseColor = @currentColor
     @already_auto_presented_modal = true
     @columnsWrapper.alpha = 1
+    @splash_view.removeFromSuperview
     self.presentModalViewController(listController, animated: false)
   end
 

@@ -75,7 +75,7 @@ class ListController < UIViewController
     attributedString.addAttribute(NSKernAttributeName, value: 1.4, range: NSMakeRange(0,9))
     cell.label.attributedText = attributedString
     cell.label.sizeToFit
-    cell.label.frame = [[16, cell.frame.size.height/2 - cell.label.frame.size.height/2],
+    cell.label.frame = [[16, cell.frame.size.height/2 - cell.label.frame.size.height/2 - 4],
                         [cell.label.frame.size.width, cell.label.frame.size.height + 6.5]]
 
 

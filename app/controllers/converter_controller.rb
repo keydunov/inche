@@ -101,10 +101,10 @@ class ConverterController < UIViewController
     listController = ListController.alloc.init
     listController.delegate = self
     listController.baseColor = @currentColor
+    self.presentModalViewController(listController, animated: false)
     @already_auto_presented_modal = true
     @columnsWrapper.alpha = 1
     @splash_view.removeFromSuperview
-    self.presentModalViewController(listController, animated: false)
   end
 
   def handlePan(pgr)

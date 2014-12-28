@@ -15,3 +15,8 @@ nbproject
 .sass-cache
 .idea
 .dat*.*
+
+vendor/Pods
+
+xcuserdata
+/vendor/Podfile.lock

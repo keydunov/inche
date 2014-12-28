@@ -44,4 +44,9 @@ Motion::Project::App.setup do |app|
   app.testflight.sdk = 'vendor/TestFlight'
   app.testflight.api_token = '602aeb365cbeeed9f6b7bbe956c31cae_MTA3MjkxNjIwMTMtMDUtMjYgMTc6MTI6MjcuOTM1MDgw'
   app.testflight.team_token = '8b4c2cc21ff4e9cad3f91bf9875e5c61_MjI4NTQyMjAxMy0wNS0yNiAxNzoxMjo1My4wMjk1MzY'
+
+  # Cocoapods
+  app.pods do
+    pod 'FlurrySDK'
+  end
 end

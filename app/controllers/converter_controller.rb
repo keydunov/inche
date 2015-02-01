@@ -6,6 +6,9 @@ class ConverterController < UIViewController
   INITIAL_COLOR = UIColor.colorWithHue((160/360.0), saturation: (54/100.0), brightness: (78/100.0), alpha: 1)
   DARK_COLOR = "#3c3c3c".to_color
 
+  INTEGER_PART_FONT_SIZE_REGULAR     = 70
+  INTEGER_PART_FONT_SIZE_SCALED_DOWN = 55
+
   def viewDidLoad
     @pair = ListController::PAIRS[0][:single]
     # Половина ширина экраны
@@ -180,14 +183,24 @@ class ConverterController < UIViewController
     integer_part = value.split(".")[0]
     fraction_part = value.split(".")[1]
 
-    fontSize = integer_part.to_i.abs >= 100 ? 55 : 70
-    viewInteger.font = UIFont.fontWithName("FARRAY", size: fontSize)
+    viewInteger.font = UIFont.fontWithName("FARRAY", size: fontSizeForInteger)
 
     viewInteger.text = integer_part
     viewInteger.sizeToFit
     viewInteger.center = [viewInteger.superview.frame.size.width/2, viewInteger.superview.frame.size.height/2]
 
     updateFractionNumber(fraction_part, viewFraction, viewInteger, viewFraction.superview)
+  end
+
+  # Font size for integer part depends on current values.
+  # If absolute value of any current value
+  # (currentY or currentX) is >= the font should be scaled dowb  otherwise regular
+  def fontSizeForInteger
+    if [@currentX.abs, @currentY.abs].any? { |i| i >= 100 }
+      INTEGER_PART_FONT_SIZE_SCALED_DOWN
+    else
+      INTEGER_PART_FONT_SIZE_REGULAR
+    end
   end
 
   def readyToConvert(changing, arrowsCenterY)

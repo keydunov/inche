@@ -10,7 +10,7 @@ class ListController < UIViewController
       double: { x: 1, x_function: ->(y) { 0.15500031000062*y }, y_function: ->(x) { 6.4516*x }, x_label: "sq in", y_label: "sq cm" }
     },
     {
-      name: "MILE ‹› KILOMETRE",
+      name: "MILE ‹› KILOMETER",
       single: { x: 1, x_function: ->(y) { 0.62137119223733*y }, y_function: ->(x) { 1.609344*x }, x_label: "mi", y_label: "km" },
       double: { x: 1, x_function: ->(y) { 0.38610215854245*y }, y_function: ->(x) { 2.589988110336*x }, x_label: "sq mi", y_label: "sq km" }
     },
